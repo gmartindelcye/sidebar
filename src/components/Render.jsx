@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SimpleFlow from "./SimpleFlow";
 import ConnectingNodes from "./ConnectingNodes";
 import DragHandle from "./DragHandle";
+import CustomNode from "./CustomNode";
 
 const Render = ({ selectedOption }) => {
   switch (selectedOption) {
@@ -12,6 +13,8 @@ const Render = ({ selectedOption }) => {
       return <ConnectingNodes />;
     case "Drag Handle":
       return <DragHandle />;
+    case "Custom Node":
+      return <CustomNode />;
     default:
       return <div>Please select an option from the sidebar.</div>;
   }
