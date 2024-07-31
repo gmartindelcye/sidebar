@@ -8,6 +8,8 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
     "Connecting Nodes",
     "Drag Handle",
     "Custom Node",
+    "Context Menu",
+    "Better Context Menu",
   ];
 
   return (
