@@ -2,7 +2,7 @@
 import PropTypes from "prop-types";
 import SimpleFlow from "./SimpleFlow";
 import ConnectingNodes from "./ConnectingNodes";
-import Option3 from "./Option3";
+import DragHandle from "./DragHandle";
 
 const Render = ({ selectedOption }) => {
   switch (selectedOption) {
@@ -10,8 +10,8 @@ const Render = ({ selectedOption }) => {
       return <SimpleFlow />;
     case "Connecting Nodes":
       return <ConnectingNodes />;
-    case "Option 3":
-      return <Option3 />;
+    case "Drag Handle":
+      return <DragHandle />;
     default:
       return <div>Please select an option from the sidebar.</div>;
   }

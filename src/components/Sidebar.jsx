@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SelectedOption from "./SelectedOption";
 
 const Sidebar = ({ selectedOption, setSelectedOption }) => {
-  const options = ["Simple Flow", "Connecting Nodes", "Option 3"];
+  const options = ["Simple Flow", "Connecting Nodes", "Drag Handle"];
 
   return (
     <div className="w-64 h-full p-4 border-r bg-gray-100">
