@@ -1,16 +1,23 @@
 // src/components/SelectedOption.jsx
 import PropTypes from "prop-types";
 
-const SelectedOption = ({ option }) => {
+const SelectedOption = ({ title, isSelected, onSelect }) => {
   return (
-    <div className="p-4 border rounded bg-gray-100">
-      <h1 className="text-2xl font-bold">Selected: {option}</h1>
+    <div
+      className={`cursor-pointer p-2 rounded ${
+        isSelected ? "bg-blue-500 text-white" : "hover:bg-gray-200"
+      }`}
+      onClick={onSelect}
+    >
+      {title}
     </div>
   );
 };
 
 SelectedOption.propTypes = {
-  option: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onSelect: PropTypes.func.isRequired,
 };
 
 export default SelectedOption;

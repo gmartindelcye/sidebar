@@ -1,13 +1,14 @@
 // src/components/Sidebar.jsx
-import SelectionOption from "./SelectionOption";
+import PropTypes from "prop-types";
+import SelectedOption from "./SelectedOption";
 
 const Sidebar = ({ selectedOption, setSelectedOption }) => {
-  const options = ["Option 1", "Option 2", "Option 3"];
+  const options = ["Simple Flow", "Connecting Nodes", "Option 3"];
 
   return (
-    <div className="w-64 p-4 border-r">
+    <div className="w-64 h-full p-4 border-r bg-gray-100">
       {options.map((option) => (
-        <SelectionOption
+        <SelectedOption
           key={option}
           title={option}
           isSelected={selectedOption === option}
@@ -16,6 +17,11 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
       ))}
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  selectedOption: PropTypes.string,
+  setSelectedOption: PropTypes.func,
 };
 
 export default Sidebar;
