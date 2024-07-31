@@ -6,6 +6,7 @@ import DragHandle from "./DragHandle";
 import CustomNode from "./CustomNode";
 import ContextMenuFlow from "./ContextMenuFlow";
 import BetterContextMenuFlow from "./BetterContextMenuFlow";
+import GlobalMenuFlow from "./GlobalMenuFlow";
 
 const Render = ({ selectedOption }) => {
   switch (selectedOption) {
@@ -21,6 +22,9 @@ const Render = ({ selectedOption }) => {
       return <ContextMenuFlow />;
     case "Better Context Menu":
       return <BetterContextMenuFlow />;
+    case "Global Menu":
+      return <GlobalMenuFlow />;
+
     default:
       return <div>Please select an option from the sidebar.</div>;
   }

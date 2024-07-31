@@ -10,6 +10,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
     "Custom Node",
     "Context Menu",
     "Better Context Menu",
+    "Global Menu",
   ];
 
   return (
