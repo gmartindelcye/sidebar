@@ -7,6 +7,7 @@ import CustomNode from "./CustomNode";
 import ContextMenuFlow from "./ContextMenuFlow";
 import BetterContextMenuFlow from "./BetterContextMenuFlow";
 import GlobalMenuFlow from "./GlobalMenuFlow";
+import TreeView from "./TreeView";
 
 const Render = ({ selectedOption }) => {
   switch (selectedOption) {
@@ -24,6 +25,8 @@ const Render = ({ selectedOption }) => {
       return <BetterContextMenuFlow />;
     case "Global Menu":
       return <GlobalMenuFlow />;
+    case "Tree View": // New option for Tree View
+      return <TreeView />; // Render TreeView
 
     default:
       return <div>Please select an option from the sidebar.</div>;
