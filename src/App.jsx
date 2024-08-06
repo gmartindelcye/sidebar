@@ -5,6 +5,7 @@ import Render from "./components/Render";
 
 const App = () => {
   const [selectedOption, setSelectedOption] = useState(null); // No default selection
+  const [data, setData] = useState({ nodes: [], edges: [] }); // Initialize data structure
 
   return (
     <div className="flex h-screen">
@@ -13,8 +14,12 @@ const App = () => {
         setSelectedOption={setSelectedOption}
       />
       <div className="flex-1 p-4 overflow-auto">
-        <Render selectedOption={selectedOption} />{" "}
-        {/* Display the selected option component */}
+        <Render
+          selectedOption={selectedOption}
+          data={data}
+          setData={setData}
+        />{" "}
+        {/* Pass setData */}
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 // src/components/TreeView.jsx
+import PropTypes from "prop-types";
 import { useCallback, useRef, useState } from "react";
 import {
   ReactFlow,
@@ -9,8 +10,8 @@ import {
   useEdgesState,
   addEdge,
 } from "@xyflow/react";
-import ContextMenu from "./ContextMenu";
-import EdgeContextMenu from "./EdgeContextMenu";
+import ContextMenu from "./ContextMenu"; // Node context menu component
+import EdgeContextMenu from "./EdgeContextMenu"; // Edge context menu component
 import GlobalMenuNodes from "./GlobalMenuNodes";
 import { ZeroNode, FundNode, FruitNode } from "./Nodes"; // Import your custom nodes
 
@@ -31,7 +32,7 @@ const nodeTypes = {
   fruitNode: FruitNode,
 };
 
-const TreeView = () => {
+const TreeView = ({ data, setData }) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [nodeMenu, setNodeMenu] = useState(null);
@@ -127,13 +128,25 @@ const TreeView = () => {
     setEdges(initialEdges); // Reset to initial edges
   }, [setNodes, setEdges]);
 
+  const saveData = useCallback(() => {
+    const newData = {
+      nodes: nodes,
+      edges: edges,
+    };
+    setData(newData); // Update the data state in App
+    console.log("Saved data:", newData);
+  }, [nodes, edges, setData]);
+
   return (
-    <div style={{ height: "100vh", position: "relative" }}>
+    <div
+      style={{ height: "100vh", position: "relative" }}
+      onClick={onPaneClick}
+    >
       <GlobalMenuNodes
         onAddNode={addNode}
         onInitialize={initialize}
-      />{" "}
-      {/* Pass the initialize function */}
+        onSaveData={saveData} // Pass the save function
+      />
       <ReactFlow
         ref={ref}
         nodes={nodes}
@@ -145,8 +158,8 @@ const TreeView = () => {
         onConnectEnd={onConnectEnd} // End connecting
         onConnect={onConnect}
         onPaneClick={onPaneClick}
-        onNodeContextMenu={onNodeContextMenu}
-        onEdgeContextMenu={onEdgeContextMenu}
+        onNodeContextMenu={onNodeContextMenu} // Node context menu
+        onEdgeContextMenu={onEdgeContextMenu} // Edge context menu
         fitView
         draggable={!isConnecting} // Disable dragging while connecting
       >
@@ -186,6 +199,11 @@ const TreeView = () => {
       </ReactFlow>
     </div>
   );
+};
+
+TreeView.propTypes = {
+  data: PropTypes.object,
+  setData: PropTypes.func.isRequired,
 };
 
 export default TreeView;

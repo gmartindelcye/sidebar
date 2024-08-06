@@ -12,6 +12,7 @@ const Sidebar = ({ selectedOption, setSelectedOption }) => {
     "Better Context Menu",
     "Global Menu",
     "Tree View",
+    "Tree Structure",
   ];
 
   return (

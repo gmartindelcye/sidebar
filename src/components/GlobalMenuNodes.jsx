@@ -1,14 +1,13 @@
-// GlobalMenuNodes.jsx
+// src/components/GlobalMenuNodes.jsx
 import PropTypes from "prop-types";
 
-const GlobalMenuNodes = ({ onAddNode, onInitialize }) => {
+const GlobalMenuNodes = ({ onAddNode, onInitialize, onSaveData }) => {
   const handleSave = () => {
-    // Implement save functionality
+    onSaveData(); // This should call the save function passed as a prop
     console.log("Save action triggered");
   };
 
   const handleInitialize = () => {
-    // Call the onInitialize function passed as a prop
     onInitialize();
     console.log("Initialize action triggered");
   };
@@ -40,14 +39,14 @@ const GlobalMenuNodes = ({ onAddNode, onInitialize }) => {
           Add Fruit Node
         </button>
       </div>
-      <hr /> {/* Horizontal line after Add Nodes */}
+      <hr />
       <button
         className="mt-2 mb-2"
         onClick={handleSave}
       >
         Save
       </button>
-      <hr /> {/* Another horizontal line before Initialize */}
+      <hr />
       <button
         className="mt-2 text-red-600"
         onClick={handleInitialize}
@@ -60,7 +59,8 @@ const GlobalMenuNodes = ({ onAddNode, onInitialize }) => {
 
 GlobalMenuNodes.propTypes = {
   onAddNode: PropTypes.func.isRequired,
-  onInitialize: PropTypes.func.isRequired, // Add prop type for onInitialize
+  onInitialize: PropTypes.func.isRequired,
+  onSaveData: PropTypes.func.isRequired,
 };
 
 export default GlobalMenuNodes;

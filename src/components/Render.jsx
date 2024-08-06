@@ -8,8 +8,9 @@ import ContextMenuFlow from "./ContextMenuFlow";
 import BetterContextMenuFlow from "./BetterContextMenuFlow";
 import GlobalMenuFlow from "./GlobalMenuFlow";
 import TreeView from "./TreeView";
+import TreeStructure from "./TreeStructure";
 
-const Render = ({ selectedOption }) => {
+const Render = ({ selectedOption, data, setData }) => {
   switch (selectedOption) {
     case "Simple Flow":
       return <SimpleFlow />;
@@ -25,9 +26,15 @@ const Render = ({ selectedOption }) => {
       return <BetterContextMenuFlow />;
     case "Global Menu":
       return <GlobalMenuFlow />;
-    case "Tree View": // New option for Tree View
-      return <TreeView />; // Render TreeView
-
+    case "Tree View":
+      return (
+        <TreeView
+          data={data}
+          setData={setData}
+        />
+      ); // Pass setData
+    case "Tree Structure":
+      return <TreeStructure data={data} />; // Render TreeStructure
     default:
       return <div>Please select an option from the sidebar.</div>;
   }
@@ -35,6 +42,8 @@ const Render = ({ selectedOption }) => {
 
 Render.propTypes = {
   selectedOption: PropTypes.string,
+  data: PropTypes.object,
+  setData: PropTypes.func.isRequired, // Ensure setData is required
 };
 
 export default Render;
