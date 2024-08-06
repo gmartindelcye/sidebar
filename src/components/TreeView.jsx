@@ -11,95 +11,19 @@ import {
 } from "@xyflow/react";
 import ContextMenu from "./ContextMenu";
 import EdgeContextMenu from "./EdgeContextMenu";
+import GlobalMenuNodes from "./GlobalMenuNodes";
 import { ZeroNode, FundNode, FruitNode } from "./Nodes"; // Import your custom nodes
 
 const initialNodes = [
   {
-    id: "0",
-    type: "zeroNode",
-    position: { x: 250, y: 50 },
-    data: { name: "Root Node", currency: "USD" },
-  },
-  {
-    id: "1",
-    type: "fundNode",
-    position: { x: 100, y: 150 },
-    data: {
-      name: "Fund A",
-      currency: "USD",
-      custodian: "Custodian A",
-      manager: "Manager A",
-    },
-  },
-  {
-    id: "2",
-    type: "fundNode",
-    position: { x: 400, y: 150 },
-    data: {
-      name: "Fund B",
-      currency: "USD",
-      custodian: "Custodian B",
-      manager: "Manager B",
-    },
-  },
-  {
-    id: "3",
-    type: "fruitNode",
-    position: { x: 20, y: 300 },
-    data: {
-      name: "Fruit A1",
-      currency: "USD",
-      custodian: "Custodian A",
-      manager: "Manager A",
-      amount: 100,
-    },
-  },
-  {
-    id: "4",
-    type: "fruitNode",
-    position: { x: 200, y: 300 },
-    data: {
-      name: "Fruit A2",
-      currency: "USD",
-      custodian: "Custodian A",
-      manager: "Manager A",
-      amount: 200,
-    },
-  },
-  {
-    id: "5",
-    type: "fruitNode",
-    position: { x: 350, y: 300 },
-    data: {
-      name: "Fruit B1",
-      currency: "USD",
-      custodian: "Custodian B",
-      manager: "Manager B",
-      amount: 300,
-    },
-  },
-  {
-    id: "6",
-    type: "fruitNode",
-    position: { x: 550, y: 300 },
-    data: {
-      name: "Fruit B2",
-      currency: "USD",
-      custodian: "Custodian B",
-      manager: "Manager B",
-      amount: 400,
-    },
+    id: "0", // Unique ID for the ZeroNode
+    type: "zeroNode", // Specify the type
+    position: { x: window.innerWidth / 2 - 50, y: 20 }, // Centered at the top
+    data: { name: "Zero Node" },
   },
 ];
 
-const initialEdges = [
-  { id: "e0-1", source: "0", target: "1" },
-  { id: "e0-2", source: "0", target: "2" },
-  { id: "1-3", source: "1", target: "3" },
-  { id: "1-4", source: "1", target: "4" },
-  { id: "2-5", source: "2", target: "5" },
-  { id: "2-6", source: "2", target: "6" },
-];
+const initialEdges = [];
 
 const nodeTypes = {
   zeroNode: ZeroNode,
@@ -113,10 +37,22 @@ const TreeView = () => {
   const [nodeMenu, setNodeMenu] = useState(null);
   const [edgeMenu, setEdgeMenu] = useState(null);
   const [selectedEdge, setSelectedEdge] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false); // Track if connecting
   const ref = useRef(null);
 
+  const onConnectStart = useCallback(() => {
+    setIsConnecting(true); // Set connecting state
+  }, []);
+
+  const onConnectEnd = useCallback(() => {
+    setIsConnecting(false); // Reset connecting state
+  }, []);
+
   const onConnect = useCallback(
-    (params) => setEdges((els) => addEdge(params, els)),
+    (params) => {
+      setEdges((els) => addEdge(params, els));
+      setIsConnecting(false); // Reset connecting state
+    },
     [setEdges]
   );
 
@@ -166,8 +102,38 @@ const TreeView = () => {
     setEdgeMenu(null); // Close both menus when clicking outside
     setSelectedEdge(null); // Clear selected edge
   }, [setNodeMenu, setEdgeMenu]);
+
+  const addNode = useCallback(
+    (type) => {
+      const lastNode = nodes[nodes.length - 1]; // Get the last node
+      const newNodePosition = {
+        x: lastNode ? lastNode.position.x + 100 : window.innerWidth / 2 - 50, // Position to the right of the last node
+        y: lastNode ? lastNode.position.y + 50 : 70, // Slightly below the last node
+      };
+
+      const newNode = {
+        id: `${nodes.length}`, // Generate a new ID
+        type: type,
+        position: newNodePosition,
+        data: { name: `${type} Node`, currency: "USD" },
+      };
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [nodes, setNodes]
+  );
+
+  const initialize = useCallback(() => {
+    setNodes(initialNodes); // Reset to initial nodes
+    setEdges(initialEdges); // Reset to initial edges
+  }, [setNodes, setEdges]);
+
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "100vh", position: "relative" }}>
+      <GlobalMenuNodes
+        onAddNode={addNode}
+        onInitialize={initialize}
+      />{" "}
+      {/* Pass the initialize function */}
       <ReactFlow
         ref={ref}
         nodes={nodes}
@@ -175,12 +141,14 @@ const TreeView = () => {
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange} // Handle node changes
         onEdgesChange={onEdgesChange} // Handle edge changes
+        onConnectStart={onConnectStart} // Start connecting
+        onConnectEnd={onConnectEnd} // End connecting
         onConnect={onConnect}
         onPaneClick={onPaneClick}
         onNodeContextMenu={onNodeContextMenu}
         onEdgeContextMenu={onEdgeContextMenu}
         fitView
-        draggable={true}
+        draggable={!isConnecting} // Disable dragging while connecting
       >
         <Controls />
         <MiniMap
@@ -201,7 +169,7 @@ const TreeView = () => {
         <Background
           color="#aaa"
           gap={16}
-        />{" "}
+        />
         {nodeMenu && (
           <ContextMenu
             onClick={onPaneClick}
@@ -215,7 +183,6 @@ const TreeView = () => {
             {...edgeMenu}
           />
         )}
-        {/* Optional background */}
       </ReactFlow>
     </div>
   );

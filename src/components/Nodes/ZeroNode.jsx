@@ -18,7 +18,7 @@ const ZeroNode = ({ data }) => {
         <Handle
           type="source"
           position={Position.Bottom}
-          className="w-16 !bg-teal-500"
+          className="w-16 !bg-blue-700"
         />
       </div>
     </div>

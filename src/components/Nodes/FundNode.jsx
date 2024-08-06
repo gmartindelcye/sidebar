@@ -15,12 +15,12 @@ const FundNode = ({ data }) => {
         <Handle
           type="target"
           position={Position.Top}
-          className="w-16 !bg-teal-500"
+          className="w-16 !bg-green-700"
         />
         <Handle
           type="source"
           position={Position.Bottom}
-          className="w-16 !bg-teal-500"
+          className="w-16 !bg-green-700"
         />
       </div>
     </div>
