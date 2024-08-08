@@ -40,6 +40,7 @@ const TreeView = ({ data, setData }) => {
   const [selectedEdge, setSelectedEdge] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false); // Track if connecting
   const ref = useRef(null);
+  const reactFlowInstance = useRef(null); // Ref for ReactFlow instance
 
   const onConnectStart = useCallback(() => {
     setIsConnecting(true); // Set connecting state
@@ -134,21 +135,32 @@ const TreeView = ({ data, setData }) => {
       edges: edges,
     };
     setData(newData); // Update the data state in App
-    console.log("Saved data:", newData);
   }, [nodes, edges, setData]);
+
+  const loadData = useCallback(() => {
+    setNodes(data.nodes);
+    setEdges(data.edges);
+    if (reactFlowInstance.current) {
+      reactFlowInstance.current.fitView(); // Force fitView after loading data
+    }
+  }, [data, setNodes, setEdges]);
 
   return (
     <div
-      style={{ height: "100vh", position: "relative" }}
+      className="h-screen relative"
       onClick={onPaneClick}
     >
       <GlobalMenuNodes
         onAddNode={addNode}
         onInitialize={initialize}
         onSaveData={saveData} // Pass the save function
+        onLoadData={loadData}
       />
       <ReactFlow
-        ref={ref}
+        ref={(instance) => {
+          ref.current = instance;
+          reactFlowInstance.current = instance; // Store the ReactFlow instance
+        }}
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
@@ -177,7 +189,7 @@ const TreeView = ({ data, setData }) => {
                 return "#eee";
             }
           }}
-          style={{ background: "#fff", border: "1px solid #ccc" }} // Optional styling
+          className="bg-white border border-gray-300" // Optional styling
         />
         <Background
           color="#aaa"
