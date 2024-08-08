@@ -1,4 +1,3 @@
-// src/components/TreeView.jsx
 import PropTypes from "prop-types";
 import { useCallback, useRef, useState } from "react";
 import {
@@ -9,6 +8,7 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import ContextMenu from "./ContextMenu"; // Node context menu component
 import EdgeContextMenu from "./EdgeContextMenu"; // Edge context menu component
@@ -40,7 +40,6 @@ const TreeView = ({ data, setData }) => {
   const [selectedEdge, setSelectedEdge] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false); // Track if connecting
   const ref = useRef(null);
-  const reactFlowInstance = useRef(null); // Ref for ReactFlow instance
 
   const onConnectStart = useCallback(() => {
     setIsConnecting(true); // Set connecting state
@@ -135,81 +134,88 @@ const TreeView = ({ data, setData }) => {
       edges: edges,
     };
     setData(newData); // Update the data state in App
+    console.log("Saved data:", newData);
   }, [nodes, edges, setData]);
 
   const loadData = useCallback(() => {
     setNodes(data.nodes);
     setEdges(data.edges);
-    if (reactFlowInstance.current) {
-      reactFlowInstance.current.fitView(); // Force fitView after loading data
-    }
   }, [data, setNodes, setEdges]);
 
+  const onInit = useCallback(
+    (instance) => {
+      // Fit the view after loading data
+      if (data.nodes.length > 0 || data.edges.length > 0) {
+        instance.fitView();
+      }
+    },
+    [data]
+  );
+
   return (
-    <div
-      className="h-screen relative"
-      onClick={onPaneClick}
-    >
-      <GlobalMenuNodes
-        onAddNode={addNode}
-        onInitialize={initialize}
-        onSaveData={saveData} // Pass the save function
-        onLoadData={loadData}
-      />
-      <ReactFlow
-        ref={(instance) => {
-          ref.current = instance;
-          reactFlowInstance.current = instance; // Store the ReactFlow instance
-        }}
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeTypes}
-        onNodesChange={onNodesChange} // Handle node changes
-        onEdgesChange={onEdgesChange} // Handle edge changes
-        onConnectStart={onConnectStart} // Start connecting
-        onConnectEnd={onConnectEnd} // End connecting
-        onConnect={onConnect}
-        onPaneClick={onPaneClick}
-        onNodeContextMenu={onNodeContextMenu} // Node context menu
-        onEdgeContextMenu={onEdgeContextMenu} // Edge context menu
-        fitView
-        draggable={!isConnecting} // Disable dragging while connecting
+    <ReactFlowProvider>
+      <div
+        className="h-screen relative"
+        onClick={onPaneClick}
       >
-        <Controls />
-        <MiniMap
-          nodeColor={(node) => {
-            switch (node.type) {
-              case "zeroNode":
-                return "blue";
-              case "fundNode":
-                return "green";
-              case "fruitNode":
-                return "orange";
-              default:
-                return "#eee";
-            }
-          }}
-          className="bg-white border border-gray-300" // Optional styling
+        <GlobalMenuNodes
+          onAddNode={addNode}
+          onInitialize={initialize}
+          onSaveData={saveData} // Pass the save function
+          onLoadData={loadData}
         />
-        <Background
-          color="#aaa"
-          gap={16}
-        />
-        {nodeMenu && (
-          <ContextMenu
-            onClick={onPaneClick}
-            {...nodeMenu}
+        <ReactFlow
+          ref={ref}
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onNodesChange={onNodesChange} // Handle node changes
+          onEdgesChange={onEdgesChange} // Handle edge changes
+          onConnectStart={onConnectStart} // Start connecting
+          onConnectEnd={onConnectEnd} // End connecting
+          onConnect={onConnect}
+          onPaneClick={onPaneClick}
+          onNodeContextMenu={onNodeContextMenu} // Node context menu
+          onEdgeContextMenu={onEdgeContextMenu} // Edge context menu
+          onInit={onInit} // Add onInit here
+          draggable={!isConnecting} // Disable dragging while connecting
+        >
+          <Controls />
+          <MiniMap
+            nodeColor={(node) => {
+              switch (node.type) {
+                case "zeroNode":
+                  return "blue";
+                case "fundNode":
+                  return "green";
+                case "fruitNode":
+                  return "orange";
+                default:
+                  return "#eee";
+              }
+            }}
+            className="bg-white border border-gray-300" // Optional styling
           />
-        )}
-        {edgeMenu && (
-          <EdgeContextMenu
-            onClose={onPaneClick}
-            onDelete={handleDeleteEdge} // Pass the delete handler
-            {...edgeMenu}
+          <Background
+            color="#aaa"
+            gap={16}
           />
-        )}
-      </ReactFlow>
-    </div>
+          {nodeMenu && (
+            <ContextMenu
+              onClick={onPaneClick}
+              {...nodeMenu}
+            />
+          )}
+          {edgeMenu && (
+            <EdgeContextMenu
+              onClose={onPaneClick}
+              onDelete={handleDeleteEdge} // Pass the delete handler
+              {...edgeMenu}
+            />
+          )}
+        </ReactFlow>
+      </div>
+    </ReactFlowProvider>
   );
 };
 
